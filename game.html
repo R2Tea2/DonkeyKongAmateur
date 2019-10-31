@@ -1,0 +1,38 @@
+<!--- Joshua Ramnaraine, Apinaash Pavalarajah, Prashanth Ketheeswaran
+January,24,2017
+game.html
+Description: this screen loads all the js files-->
+
+
+
+<script src="phaser.min.js"></script>
+<script src="splashScreen.js"></script>
+<script src="menuScreen.js"></script>
+<script src="helpScreen.js"></script>
+<script src="GameOver.js"></script>
+<script src="leaderboard.js"></script>
+<script src="lvl1.js"></script>
+<script src="NextLevel.js"></script>
+<script src="lvl2.js"></script>
+
+
+
+<script>
+//Make all your variables here????????????!!!!!!!!!!!!!!!!!!!
+
+	var game = new Phaser.Game(800, 568, Phaser.AUTO, '');
+	
+	game.state.add('splash', splashScreen);
+	game.state.add('menu', menuScreen);
+	game.state.add('leaderboard', leaderboard);
+	game.state.add('lvl1', lvl1);
+	game.state.add('NextLevel', NextLevel);
+	//game.state.add('donkey', DonkeyKong);
+	game.state.add('helpScreen', helpScreen);
+	game.state.add('GameOver', GameOver);
+	game.state.add('lvl2', lvl2);
+
+
+	game.state.start('splash');//use this code to determine the screen you want to show
+
+</script>

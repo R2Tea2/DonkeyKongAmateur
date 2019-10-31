@@ -1,0 +1,464 @@
+<script src="phaser.min.js"></script>
+<script src="phaser.js"></script>
+
+/*CTRL-SHIFT-I activates opera's development tools*/
+/*http://phaser.io/docs*/
+/*http://phaser.io/examples*/
+<script>
+	var game = new Phaser.Game(800, 568, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+
+//All varibles go here
+	var tempX= 20;
+	var tempY= 511;
+	var marioLeft;
+	var mario;
+	var jumpCount = 0;
+	var jumping = false;
+	var jumping2 = false;
+	var beams;
+	var ladders;
+	var barrelCount;
+	var userScore;
+	var lives = 3;
+	var timer;
+	var gameTimer=0;
+	//var inputFirstName = prompt("Please enter your first name:");
+	//var inputLastName = prompt("Please enter your last name:");
+	//var firstNameInitial = inputFirstName.substring(0,0).toUpperCase();
+	//var lastNameInitial = inputLastName.substring(0,0).toUpperCase();
+
+
+//loads resources found in the assets folder into memory
+	function preload() {
+
+		game.load.spritesheet("donkey", "assets/Sprites/Donkey5.png", 49, 32, 4 );
+		game.load.spritesheet("marioLeft", "assets/Sprites/Mario1.png", 18, 16, 3 );
+		game.load.spritesheet("mario", "assets/Sprites/MarioF.png", 18, 16, 3 );
+		game.load.spritesheet("marioClimb", "assets/Sprites/MarioClimb3.png", 14, 16, 2 );
+		// here we upolad our spritesheets
+		game.load.image("beam","assets/Sprites/Beam.png");;
+		game.load.image("barrel","assets/Sprites/Barrel.png");
+		game.load.image("ladder","assets/Sprites/ladder.png");
+		game.load.image("bigLadder","assets/Sprites/bigLadder.png");
+		game.load.image("miniBeam", "assets/Sprites/miniBeam.png");
+		game.load.image("peach", "assets/Sprites/princess.png");
+		game.load.image("rollBarrel", "assets/Sprites/rollBarrel.png");
+		game.load.image("heart1", "assets/Sprites/heart.png");
+
+		//here we add our images 
+		
+
+	}
+
+//initializes all varibles with starting values
+	function create() {
+		//loads an image into a varible its paremeters are its coordinates 
+		//of the image
+		timer=0;
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+													
+													
+		game.world.enableBody = true;				
+													
+		heart1=game.add.sprite(760,0, 'heart1');
+		heart1.scale.setTo(2,2);
+		
+		heart2=game.add.sprite(730,0, 'heart1');
+		heart2.scale.setTo(2,2);
+	
+		heart3=game.add.sprite(700,0, 'heart1');
+		heart3.scale.setTo(2,2);
+
+
+		beams = game.add.group();
+		ladders = game.add.group();
+
+		beam = game.add.sprite(-10, 110, 'beam');
+		beam.body.immovable = true;
+		beams.add(beam);
+
+
+		beam3 = game.add.sprite(0, 541, 'beam');
+		beam3.width= 800;
+		beam3.body.immovable = true;
+
+	
+		beam2 = game.add.sprite(65, 190, 'beam');
+		beam2.body.immovable = true;
+		beams.add(beam2);
+
+		beam4 = game.add.sprite(0, 270, 'beam');;
+		beam4.body.immovable = true;
+		beams.add(beam4);
+
+		beam5 = game.add.sprite(60, 365, 'beam');
+		beam5.body.immovable = true;
+		beams.add(beam5);
+
+		beam6 = game.add.sprite(0, 450, 'beam');
+		beam6.body.immovable = true;
+		beams.add(beam6);
+
+		miniBeam = game.add.sprite(270,50, 'miniBeam');
+		miniBeam.width=140;
+		miniBeam.body.immovable = true;
+		// beam 1-6 and minibeam is being place in the game and the beams are not moving. The beams are also place in angles.
+
+		ladder = game.add.sprite(312,217, 'ladder');
+		ladder.height = 52;
+		ladder.body.immovable = true;
+		ladders.add(ladder);
+ 
+
+		ladder2 = game.add.sprite(237,395, 'ladder');
+		ladder2.height = 56; 
+		ladder2.body.immovable = true;
+		ladders.add(ladder2);
+
+		ladder3 = game.add.sprite(505,479, 'ladder');
+		ladder3.height = 60;
+		ladder3.body.immovable = true;
+		ladders.add(ladder3);
+
+		ladder4 = game.add.sprite(608,300, 'ladder');
+		ladder4.height = 65; 
+		ladder4.body.immovable = true;
+		ladders.add(ladder4);
+
+		ladder5 = game.add.sprite(720,138, 'ladder');
+		ladder5.height = 51; 
+		ladder5.body.immovable = true;
+		ladders.add(ladder5);
+		// ladder 1-5 is being placed in the game and they cannot also not move
+
+		bigLadder = game.add.sprite(242,0, 'bigLadder');
+		bigLadder.height = 110;
+		bigLadder.body.immovable = true;
+
+		bigLadder2 = game.add.sprite(411,0, 'bigLadder');
+		bigLadder2.height = 110;
+		bigLadder2.body.immovable = true;
+		// ladder 1-5 and bigLadder1-2 is being placed in the game and they cannot also not move.
+
+		peach = game.add.sprite(273,5, 'peach');
+		peach.scale.setTo(2,2);
+		// peaches location and setting the size 
+
+		barrel = game.add.sprite(0, 45, 'barrel');
+		barrel = game.add.sprite(20, 45, 'barrel');
+		// Add in the barrels
+
+		donkey = game.add.sprite(72, 45, 'donkey');
+		donkey.animations.add('play');
+		donkey.animations.play('play', 1, true);
+		donkey.scale.setTo(2,2);
+		//Adding donkey kong, the animations and setting the scale of it.
+
+
+		mario = game.add.sprite(tempX, tempY, 'mario');
+		mario.animations.add('walkRight');
+		mario.scale.setTo(2,2);
+		mario.body.gravity.y = 600;
+		//The same concept above applies here but its for Mario instead of donkey kong.
+		
+		
+		marioLeft = game.add.sprite(50, 80, 'marioLeft');
+		marioLeft.animations.add('walk');
+		marioLeft.scale.setTo(2,2);
+		marioLeft.visible=false;
+		marioLeft.x=mario.x;
+		marioLeft.y=mario.y;
+		//The same concept as above but it applies for Mario when he turns left. Mario lefts, visiblity is set to 
+		//false for now.
+
+
+		rollBarrel = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel.scale.setTo(1.4,1.4);
+		rollBarrel.body.gravity.y = 600;
+		
+		rollBarrel2 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel2.scale.setTo(1.4,1.4);
+		rollBarrel2.visible = false;
+
+		
+		rollBarrel3 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel3.scale.setTo(1.4,1.4);
+		rollBarrel3.visible = false;
+		
+		rollBarrel4 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel4.scale.setTo(1.4,1.4);
+		rollBarrel4.visible = false;
+		
+		rollBarrel5 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel5.scale.setTo(1.4,1.4);
+		rollBarrel5.visible = false;
+		
+		rollBarrel6 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel6.scale.setTo(1.4,1.4);
+		rollBarrel6.visible = false;
+		
+		rollBarrel7 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel7.scale.setTo(1.4,1.4);
+		rollBarrel7.visible = false;
+		
+		rollBarrel8 = game.add.sprite(188, 90, 'rollBarrel');
+		rollBarrel8.scale.setTo(1.4,1.4);
+		rollBarrel8.visible = false;
+		//The barrel moving animation.
+		
+}
+
+	function checkOverlap(spriteA, spriteB) {
+
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
+
+	// This function is checking the overlap for each sprite.
+	} 
+	
+	 function climbing(player, ladder)
+	{
+		if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && checkOverlap(player,ladder)){	
+	    	//mario.body.velocity.y = -150;
+	    	player.body.y-=5;
+	    	player.body.velocity.x = 0;
+	    	player.body.velocity.x = 0;
+	    	
+		}
+		else if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && jumping==false && jumpCount==0){	
+	    	jumping=true;
+	    
+		}
+		//This function is also checking the overlap for the ladder and sprite while pressing up arrow key.
+		//If true, mario will go up the ladder.
+		//If false, mario will go back down.
+		
+	}
+	
+	function marioJumping()
+	{
+		if(jumping==true)
+		{
+			mario.body.velocity.y = -150;
+			jumpCount++;
+		}
+		if(jumpCount>25 && jumping==true)
+		{
+			mario.body.velocity.y = 150;
+		}
+		if(jumpCount>50 && jumping==true)
+		{
+			jumping=false;
+			jumpCount=0;
+		}
+	}
+	
+	function deathByBarrel(mario,barrel)
+	{
+		if( checkOverlap(mario,barrel)==true)
+		{
+			mario.x = 20;
+			mario.y = 512;
+			lives=lives-1;
+		}
+	}
+		//The function above is calculating the jumping for mario.
+		//This is preventing the user from holding the up arrow key to fly.
+		//Restricts the height of mario.
+	
+	//The function below is checking to see if the barrel is colliding or touching the beams.
+	//If this is true the barrel will roll.
+	function barrelsRolling(barrels)
+	{
+		barrels.body.gravity.y = 600;
+
+		if (game.physics.arcade.collide(barrels,beam) == true)
+		{
+			barrels.x = barrels.x+3;
+
+		}
+		if (game.physics.arcade.collide(barrels,beam2) == true)
+		{
+			barrels.x = barrels.x-3;
+			
+		}
+		
+		if (game.physics.arcade.collide(barrels,beam4) == true)
+		{
+			barrels.x = barrels.x+3;
+			
+		}
+		if (game.physics.arcade.collide(barrels,beam5) == true)
+		{
+			barrels.x = barrels.x-3;
+			
+		}
+		if (game.physics.arcade.collide(barrels,beam6) == true)
+		{
+			barrels.x = barrels.x+3;
+			
+		}
+		if (game.physics.arcade.collide(barrels,beam3) == true)
+		{
+			barrels.x = barrels.x-3;
+
+		}
+		
+
+	}
+
+	/* the following function is called for every
+	frame on the game. this is were the basis of all the games 
+	actions happens
+	*/
+
+	function update() {	
+		timer=timer+1;
+		
+		 barrelsRolling(rollBarrel);
+		
+		if (timer>200)
+		{
+		rollBarrel2.visible=true;
+		barrelsRolling(rollBarrel2);
+		}
+		
+		if (timer>400)
+		{
+		rollBarrel3.visible=true;
+		barrelsRolling(rollBarrel3);
+		}
+		
+		if (timer>600)
+		{
+		rollBarrel4.visible=true;
+		barrelsRolling(rollBarrel4);
+		}
+		
+		if (timer>800)
+		{
+		rollBarrel5.visible=true;
+		barrelsRolling(rollBarrel5);
+		}
+		
+		if (timer>1000)
+		{
+		rollBarrel6.visible=true;
+		barrelsRolling(rollBarrel6);
+		}
+		
+		if (timer>1200)
+		{
+		rollBarrel7.visible=true;
+		barrelsRolling(rollBarrel7);
+		}
+		
+		if (timer>1400)
+		{
+		rollBarrel8.visible=true;
+		barrelsRolling(rollBarrel8);
+		}
+		
+
+
+		//Calls the function barrel rolls.
+		
+		deathByBarrel(mario,rollBarrel)
+		deathByBarrel(mario,rollBarrel2)
+		deathByBarrel(mario,rollBarrel3)
+		deathByBarrel(mario,rollBarrel4)
+		deathByBarrel(mario,rollBarrel5)
+		deathByBarrel(mario,rollBarrel6)
+		deathByBarrel(mario,rollBarrel7)
+		deathByBarrel(mario,rollBarrel8)
+
+		//the code above means if barrel hits mario, then mario starts at the beginning and loses a life 
+		if (lives==2)
+		{
+			heart3.visible=false;
+		}
+		if (lives==1)
+		{
+			heart2.visible=false;
+		}
+		if (lives==0)
+		{
+			heart1.visible=false;
+		}
+
+	
+		game.physics.arcade.collide(mario,beam6);
+		game.physics.arcade.collide(mario,beam5);
+		game.physics.arcade.collide(mario,beam4);
+		game.physics.arcade.collide(mario,beam3);
+		game.physics.arcade.collide(mario,beam2);
+		game.physics.arcade.collide(mario,beam);
+		game.physics.arcade.collide(mario,miniBeam);
+		//the code above is making mario walk on the beam
+		
+		climbing(mario,ladder3);
+		climbing(mario,ladder2);
+		climbing(mario,ladder4);
+		climbing(mario,ladder5);
+		climbing(mario,ladder);
+		climbing(mario,bigLadder);
+		climbing(mario,bigLadder2);
+		//mario climbing the ladders.
+		
+		
+		//The if statement below is for mario to move right.
+		if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){	
+	    	mario.body.velocity.x = 250;
+	    	// mario.animations.play('walkRight',5,false);
+	    	// marioLeft.visible = false;
+	    	// mario.visible = true;
+	    	// mario.x = marioLeft.x;
+	    	//  mario.y = marioLeft.y;
+			
+		}
+		//The else if statement below makes mario move left.
+		else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){	
+	    	// marioLeft.visible=true;
+	    	// mario.visible = false;
+	    	// marioLeft.x = mario.x;
+	    	// marioLeft.y = mario.y;
+	    	// marioLeft.body.velocity.x = -250;
+	    	// marioLeft.animations.play('walk',5,false);
+	    	mario.body.velocity.x = -250;
+
+		}
+		else
+		{
+		//If the user does not click either key, then mario does not move.
+			mario.body.velocity.x = 0;
+			// marioLeft.body.velocity.x = 0;
+
+		}
+		//The code below makes it so that mario cannot leave the screen.
+		if (mario.x>770)
+		{
+			mario.x=770;
+		}
+		if (mario.x<10)
+		{
+			mario.x=10;
+		}
+		if (mario.y<10)
+		{
+			mario.y=10;
+		}
+		
+		if (checkOverlap(mario,peach)==true)
+		{
+			
+		}
+
+		//This calls the mario jumping function again.
+		marioJumping();
+	}//end of update
+	
+	</script>
+
